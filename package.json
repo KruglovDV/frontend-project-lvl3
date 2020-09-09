@@ -1,31 +1,21 @@
 {
-  "name": "@hexlet/nodejs-package",
-  "version": "0.0.3",
-  "description": "Node.js boilerplate package",
-  "bin": {
-    "hexlet": "bin/nodejs-package.js"
-  },
+  "name": "rss aggregator",
+  "version": "0.0.1",
+  "description": "rss aggregator",
+  "private": true,
   "engines": {
     "node": ">=14"
   },
   "scripts": {
-    "test": "npx -n --experimental-vm-modules jest"
+    "test": "npx -n --experimental-vm-modules jest",
+    "build": "webpack"
   },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/hexlet-boilerplates/nodejs-package.git"
-  },
-  "author": "Kirill Mokevnin",
+  "author": "Dmitry Kruglov",
   "license": "ISC",
-  "bugs": {
-    "url": "https://github.com/hexlet-boilerplates/nodejs-package/issues"
-  },
-  "type": "module",
   "jest": {
     "testEnvironment": "node",
     "transform": {}
   },
-  "homepage": "https://github.com/hexlet-boilerplates/nodejs-package#readme",
   "dependencies": {
     "debug": "^4.1.1",
     "lodash": "^4.17.20"
@@ -36,7 +26,10 @@
     "eslint-config-airbnb-base": "^14.2.0",
     "eslint-plugin-import": "^2.22.0",
     "eslint-plugin-jest": "^23.20.0",
+    "html-webpack-plugin": "^4.4.1",
     "jest": "^26.4.2",
-    "jest-cli": "^26.4.2"
+    "jest-cli": "^26.4.2",
+    "webpack": "^4.44.1",
+    "webpack-cli": "^3.3.12"
   }
 }

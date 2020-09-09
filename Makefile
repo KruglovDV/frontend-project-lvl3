@@ -1,8 +1,5 @@
 install: install-deps
 
-run:
-	bin/nodejs-package.js 10
-
 install-deps:
 	npm ci
 
@@ -17,5 +14,8 @@ lint:
 
 publish:
 	npm publish
+
+build:
+	npx webpack
 
 .PHONY: test
