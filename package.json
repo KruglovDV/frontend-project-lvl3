@@ -17,8 +17,11 @@
     "transform": {}
   },
   "dependencies": {
+    "bootstrap": "^4.5.2",
     "debug": "^4.1.1",
-    "lodash": "^4.17.20"
+    "jquery": "^3.5.1",
+    "lodash": "^4.17.20",
+    "popper.js": "^1.16.1"
   },
   "devDependencies": {
     "@jest/globals": "^26.4.2",
@@ -29,6 +32,10 @@
     "html-webpack-plugin": "^4.4.1",
     "jest": "^26.4.2",
     "jest-cli": "^26.4.2",
+    "postcss": "^7.0.32",
+    "postcss-loader": "^4.0.1",
+    "sass": "^1.26.10",
+    "sass-loader": "^10.0.2",
     "webpack": "^4.44.1",
     "webpack-cli": "^3.3.12"
   }
