@@ -18,4 +18,7 @@ publish:
 build:
 	npx webpack
 
+start-dev:
+	npx webpack-dev-server
+
 .PHONY: test

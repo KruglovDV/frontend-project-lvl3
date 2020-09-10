@@ -8,7 +8,25 @@
 </head>
 
 <body>
-  <div>content here</div>
-  <button type="button" class="btn btn-primary">Primary</button>
+  <div class="jumbotron">
+    <div class="container-xl">
+      <div class="row">
+        <div class="col-md-10 col-lg-8 mx-auto">
+          <h1 class="display-4 display-3">RSS Reader</h1>
+          <form>
+            <div class="form-row">
+              <div class="col">
+                <input type="text" class="form-control" id="rssLink" aria-describedby="rssLink">
+                <small id="linkHelp" class="form-text text-muted">Example: https://ru.hexlet.io/lessons.rss.</small>
+              </div>
+              <div class="col-auto">
+                <button type="submit" class="btn btn-primary">Add</button>
+              </div>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
 </body>
 </html>
