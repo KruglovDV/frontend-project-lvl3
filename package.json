@@ -4,7 +4,7 @@
   "description": "rss aggregator",
   "private": true,
   "engines": {
-    "node": "14.x"
+    "node": "12.x"
   },
   "scripts": {
     "test": "npx -n --experimental-vm-modules jest",
