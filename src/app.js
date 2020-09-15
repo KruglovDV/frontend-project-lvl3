@@ -12,13 +12,11 @@ const processUrlValidationResult = (url, state) => (isUrlValid) => {
 
   if (!isUrlValid || isUrlNotUniq) {
     const errorMessage = isUrlNotUniq ? 'url already exists' : 'invalid url';
-    // eslint-disable-next-line no-param-reassign
-    state.form = { state: FORM_STATES.ERROR, errorMessage };
+    _.set(state, 'form', { state: FORM_STATES.ERROR, errorMessage });
     throw new Error(errorMessage);
   }
 
-  // eslint-disable-next-line no-param-reassign
-  state.form = { state: FORM_STATES.PROCESSED };
+  _.set(state, 'form', { state: FORM_STATES.PROCESSED });
   return url;
 };
 
