@@ -14,11 +14,14 @@
   "author": "Dmitry Kruglov",
   "license": "ISC",
   "dependencies": {
+    "axios": "^0.20.0",
     "bootstrap": "^4.5.2",
     "debug": "^4.1.1",
     "jquery": "^3.5.1",
     "lodash": "^4.17.20",
-    "popper.js": "^1.16.1"
+    "on-change": "^2.1.2",
+    "popper.js": "^1.16.1",
+    "yup": "^0.29.3"
   },
   "devDependencies": {
     "@babel/core": "^7.11.6",

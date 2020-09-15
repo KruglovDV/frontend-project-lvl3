@@ -1,6 +1,5 @@
 import 'bootstrap';
 import './app.scss';
+import app from './app';
 
-import _ from 'lodash';
-
-export default () => console.log(_.toUpper('hello world'));
+app();
