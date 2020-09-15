@@ -1,5 +1,5 @@
-export const FORM_STATES = {
+export default {
   ERROR: 'error',
   PROCESSED: 'processed',
-  FILLING: 'filling'
+  FILLING: 'filling',
 };

@@ -1,11 +1,11 @@
-import { FORM_STATES } from './constants';
+import FORM_STATES from './constants';
 
 const invalidFieldClassName = 'is-invalid';
 
 const renderForm = (state) => {
   const { state: formState, errorMessage } = state.form;
-  const errorMessageNode = document.getElementById('errorMessage');
-  const input = document.getElementById('rssLinkInput');
+  const errorMessageNode = document.getElementById('errorMessage'); // eslint-disable-line
+  const input = document.getElementById('rssLinkInput'); // eslint-disable-line
 
   if (formState === FORM_STATES.ERROR) {
     errorMessageNode.textContent = errorMessage;
@@ -19,11 +19,11 @@ const renderForm = (state) => {
 };
 
 const mapping = {
-  'form': (state) => renderForm(state),
+  form: renderForm,
 };
 
-const watch = function (path, value, previousValue, name) {
+function watch(path) {
   mapping[path](this);
-};
+}
 
 export default watch;

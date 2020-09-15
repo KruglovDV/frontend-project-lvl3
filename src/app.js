@@ -1,23 +1,23 @@
 import _ from 'lodash';
-import _fp from 'lodash/fp';
 import onChange from 'on-change';
 import * as yup from 'yup';
-import axios from 'axios';
 
 import watch from './watchers';
-import { FORM_STATES } from './constants';
+import FORM_STATES from './constants';
 
 const validateUrl = yup.string().url();
 
 const processUrlValidationResult = (url, state) => (isUrlValid) => {
   const isUrlNotUniq = _.includes(_.map(state.feeds, 'url'), url);
-  
+
   if (!isUrlValid || isUrlNotUniq) {
     const errorMessage = isUrlNotUniq ? 'url already exists' : 'invalid url';
+    // eslint-disable-next-line no-param-reassign
     state.form = { state: FORM_STATES.ERROR, errorMessage };
     throw new Error(errorMessage);
   }
 
+  // eslint-disable-next-line no-param-reassign
   state.form = { state: FORM_STATES.PROCESSED };
   return url;
 };
@@ -28,12 +28,12 @@ const app = () => {
       state: FORM_STATES.FILLING,
     },
     feeds: [{ id: 1, url: 'https://ru.hexlet.io/lessons.rss' }], // { id, url }
-    posts: [] // { id, url, feedId }
+    posts: [], // { id, url, feedId }
   };
 
   const watchedState = onChange(state, watch);
 
-  const form = document.getElementById('rssForm');
+  const form = document.getElementById('rssForm'); // eslint-disable-line no-undef
 
   const formSubmitHandler = (event) => {
     event.preventDefault();
