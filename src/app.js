@@ -1,6 +1,8 @@
 import _ from 'lodash';
+import _fp from 'lodash/fp';
 import onChange from 'on-change';
 import * as yup from 'yup';
+import axios from 'axios';
 
 import watch from './watchers';
 import FORM_STATES from './constants';
@@ -10,27 +12,37 @@ const isValidUrl = yup.string().url();
 const isUniqUrl = (urls, url) => () => {
   if (_.includes(urls, url)) {
     throw new Error('url is already exists');
-  };
+  }
   return url;
 };
 
 const handleValidationError = (state) => (e) => {
-  state.form = { state: FORM_STATES.ERROR, errorMessage: e.message };
-}
+  _.set(state, 'form', { state: FORM_STATES.ERROR, errorMessage: e.message });
+};
 
-const validate = (url, addedUrls) => new Promise((resolve, reject) => {
-  return isValidUrl.validate(url)
-    .then(isUniqUrl(addedUrls, url))
-    .then(resolve)
-    .catch(reject);
-});
+const validate = (url, addedUrls) => (
+  new Promise((resolve, reject) => (
+    isValidUrl.validate(url)
+      .then(isUniqUrl(addedUrls, url))
+      .then(resolve)
+      .catch(reject)
+  ))
+);
+
+const requestFeed = (url) => axios.get(url).then(_fp.get('data'));
+
+const parseFeed = (xml) => {
+  console.log(xml);
+};
+
+const setNewFeed = (newFeed) => {
+  
+};
 
 const app = () => {
   const state = {
-    form: {
-      state: FORM_STATES.FILLING,
-    },
-    feeds: [{ id: 1, url: 'https://ru.hexlet.io/lessons.rss' }], // { id, url }
+    form: { state: FORM_STATES.FILLING },
+    feeds: [{ id: 1, url: 'https://ru.hexlet.io/lessonss.rss' }], // { id, url }
     posts: [], // { id, url, feedId }
   };
 
@@ -44,10 +56,13 @@ const app = () => {
     const addedUrls = _.map(state.feeds, 'url');
 
     validate(url, addedUrls)
-    .then((url) => {
-      watchedState.form = { state: FORM_STATES.PROCESSED };
-    })
-    .catch(handleValidationError(watchedState));
+      .then(() => {
+        _.set(watchedState, 'form', { state: FORM_STATES.PROCESSED });
+        return requestFeed(url);
+      })
+      .then(parseFeed)
+      .then(setNewFeed)
+      .catch(handleValidationError(watchedState));
   };
 
   form.addEventListener('submit', formSubmitHandler);
