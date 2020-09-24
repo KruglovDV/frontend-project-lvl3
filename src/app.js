@@ -5,20 +5,25 @@ import * as yup from 'yup';
 import watch from './watchers';
 import FORM_STATES from './constants';
 
-const validateUrl = yup.string().url();
+const isValidUrl = yup.string().url();
 
-const processUrlValidationResult = (url, state) => (isUrlValid) => {
-  const isUrlNotUniq = _.includes(_.map(state.feeds, 'url'), url);
-
-  if (!isUrlValid || isUrlNotUniq) {
-    const errorMessage = isUrlNotUniq ? 'url already exists' : 'invalid url';
-    _.set(state, 'form', { state: FORM_STATES.ERROR, errorMessage });
-    throw new Error(errorMessage);
-  }
-
-  _.set(state, 'form', { state: FORM_STATES.PROCESSED });
+const isUniqUrl = (urls, url) => () => {
+  if (_.includes(urls, url)) {
+    throw new Error('url is already exists');
+  };
   return url;
 };
+
+const handleValidationError = (state) => (e) => {
+  state.form = { state: FORM_STATES.ERROR, errorMessage: e.message };
+}
+
+const validate = (url, addedUrls) => new Promise((resolve, reject) => {
+  return isValidUrl.validate(url)
+    .then(isUniqUrl(addedUrls, url))
+    .then(resolve)
+    .catch(reject);
+});
 
 const app = () => {
   const state = {
@@ -36,9 +41,13 @@ const app = () => {
   const formSubmitHandler = (event) => {
     event.preventDefault();
     const url = _.get(event, 'target.url.value');
-    validateUrl.isValid(url)
-      .then(processUrlValidationResult(url, watchedState))
-      .catch(_.identity);
+    const addedUrls = _.map(state.feeds, 'url');
+
+    validate(url, addedUrls)
+    .then((url) => {
+      watchedState.form = { state: FORM_STATES.PROCESSED };
+    })
+    .catch(handleValidationError(watchedState));
   };
 
   form.addEventListener('submit', formSubmitHandler);
