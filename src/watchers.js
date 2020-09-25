@@ -20,6 +20,8 @@ const renderForm = (state) => {
 
 const mapping = {
   form: renderForm,
+  feeds: console.log,
+  posts: console.log,
 };
 
 function watch(path) {

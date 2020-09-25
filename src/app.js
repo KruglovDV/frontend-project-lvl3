@@ -6,6 +6,7 @@ import axios from 'axios';
 
 import watch from './watchers';
 import FORM_STATES from './constants';
+import parseFeed from './parser';
 
 const isValidUrl = yup.string().url();
 
@@ -31,12 +32,10 @@ const validate = (url, addedUrls) => (
 
 const requestFeed = (url) => axios.get(url).then(_fp.get('data'));
 
-const parseFeed = (xml) => {
-  console.log(xml);
-};
-
-const setNewFeed = (newFeed) => {
-  
+const setNewFeed = (state) => ({ feed, posts: newPosts }) => {
+  const { feeds, posts } = state;
+  _.set(state, 'feeds', [...feeds, feed]);
+  _.set(state, 'posts', [...posts, ...newPosts]);
 };
 
 const app = () => {
@@ -61,7 +60,7 @@ const app = () => {
         return requestFeed(url);
       })
       .then(parseFeed)
-      .then(setNewFeed)
+      .then(setNewFeed(watchedState))
       .catch(handleValidationError(watchedState));
   };
 
