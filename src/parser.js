@@ -20,6 +20,8 @@ const parseNode = (node) => {
   return { id: uniqueId(), ...parsedNode };
 };
 
+const addFeedId = (feedId) => (post) => ({ ...post, feedId });
+
 const parseFeed = (xmlString) => {
   // eslint-disable-next-line no-undef
   const doc = new DOMParser().parseFromString(xmlString, 'text/xml');
@@ -28,7 +30,7 @@ const parseFeed = (xmlString) => {
   const postNodes = doc.querySelectorAll('item');
 
   const feed = parseNode(channelNode);
-  const posts = map(postNodes, parseNode);
+  const posts = map(postNodes, compose(addFeedId(feed.id), parseNode));
 
   return { feed, posts };
 };

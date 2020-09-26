@@ -1,24 +1,29 @@
-import _ from 'lodash';
-import _fp from 'lodash/fp';
 import onChange from 'on-change';
 import * as yup from 'yup';
 import axios from 'axios';
+import set from 'lodash/set';
+import get from 'lodash/get';
+import map from 'lodash/map';
+import includes from 'lodash/includes';
+import getFp from 'lodash/fp/get';
 
 import watch from './watchers';
 import FORM_STATES from './constants';
 import parseFeed from './parser';
 
+const proxyUrl = 'https://cors-anywhere.herokuapp.com/';
+
 const isValidUrl = yup.string().url();
 
 const isUniqUrl = (urls, url) => () => {
-  if (_.includes(urls, url)) {
+  if (includes(urls, url)) {
     throw new Error('url is already exists');
   }
   return url;
 };
 
 const handleValidationError = (state) => (e) => {
-  _.set(state, 'form', { state: FORM_STATES.ERROR, errorMessage: e.message });
+  set(state, 'form', { state: FORM_STATES.ERROR, errorMessage: e.message });
 };
 
 const validate = (url, addedUrls) => (
@@ -30,19 +35,19 @@ const validate = (url, addedUrls) => (
   ))
 );
 
-const requestFeed = (url) => axios.get(url).then(_fp.get('data'));
+const requestFeed = (url) => axios.get(`${proxyUrl}${url}`).then(getFp('data'));
 
-const setNewFeed = (state) => ({ feed, posts: newPosts }) => {
+const setNewFeed = (state, url) => ({ feed, posts: newPosts }) => {
   const { feeds, posts } = state;
-  _.set(state, 'feeds', [...feeds, feed]);
-  _.set(state, 'posts', [...posts, ...newPosts]);
+  set(state, 'feeds', [...feeds, { ...feed, url }]);
+  set(state, 'posts', [...posts, ...newPosts]);
 };
 
 const app = () => {
   const state = {
     form: { state: FORM_STATES.FILLING },
-    feeds: [{ id: 1, url: 'https://ru.hexlet.io/lessonss.rss' }], // { id, url }
-    posts: [], // { id, url, feedId }
+    feeds: [], // { id, url, title, description, link }
+    posts: [], // { id, title, description, link, feedId }
   };
 
   const watchedState = onChange(state, watch);
@@ -51,16 +56,16 @@ const app = () => {
 
   const formSubmitHandler = (event) => {
     event.preventDefault();
-    const url = _.get(event, 'target.url.value');
-    const addedUrls = _.map(state.feeds, 'url');
+    const url = get(event, 'target.url.value');
+    const addedUrls = map(state.feeds, 'url');
 
     validate(url, addedUrls)
       .then(() => {
-        _.set(watchedState, 'form', { state: FORM_STATES.PROCESSED });
+        set(watchedState, 'form', { state: FORM_STATES.PROCESSED });
         return requestFeed(url);
       })
       .then(parseFeed)
-      .then(setNewFeed(watchedState))
+      .then(setNewFeed(watchedState, url))
       .catch(handleValidationError(watchedState));
   };
 
