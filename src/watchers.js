@@ -2,6 +2,7 @@ import FORM_STATES from './constants';
 import compose from 'lodash/fp/compose';
 import forEach from 'lodash/forEach';
 import groupBy from 'lodash/groupBy';
+import differenceBy from 'lodash/differenceBy';
 
 const invalidFieldClassName = 'is-invalid';
 
@@ -36,20 +37,19 @@ const createFeedNode = (feed) => {
   
   feedNode.appendChild(titleNode);
   feedNode.appendChild(postsBoxNode);
+  
   return feedNode;
 };
 
-const renderFeeds = (state) => {
-  const { feeds } = state;
+const renderFeeds = (state, newFeeds, prevFeeds) => {
+  const addedFeeds = differenceBy(newFeeds, prevFeeds, 'id');
   const feedsBoxNode = document.getElementById('feedsBox');
   
-  feedsBoxNode.innerHtml = '';
-
   const renderFeed = compose(
     (feed) => feedsBoxNode.appendChild(feed),
     createFeedNode,
   );
-  forEach(feeds, renderFeed);
+  forEach(addedFeeds, renderFeed);
 };
 
 const createPostNode = (post) => {
@@ -65,14 +65,13 @@ const createPostNode = (post) => {
   return postNodeBox;
 };
 
-const renderPosts = (state) => {
-  const { posts } = state;
-  const groupedPostsByFeedId = groupBy(posts, 'feedId');
+const renderPosts = (state, newPosts, prevPosts) => {
+  const addedPosts = differenceBy(newPosts, prevPosts, 'id');
+  const groupedPostsByFeedId = groupBy(addedPosts, 'feedId');
 
   const renderFeedPosts = (feedPosts, feedId) => {
     const postsBoxNode = document.querySelector(`div[id=${getFeedId(feedId)}] > div`);
-    postsBoxNode.innerHtml = '';
-    
+    postsBoxNode.innerHTML = '';
     const renderPost = compose(
       (post) => postsBoxNode.appendChild(post),
       createPostNode,
@@ -90,8 +89,8 @@ const mapping = {
   posts: renderPosts,
 };
 
-function watch(path) {
-  mapping[path](this);
+function watch(path, newValue, prevValue) {
+  mapping[path](this, newValue, prevValue);
 }
 
 export default watch;

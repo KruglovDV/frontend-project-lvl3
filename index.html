@@ -7,32 +7,43 @@
   <meta name="description" content="Rss aggregator">
 </head>
 
-<body>
-  <div class="jumbotron jumbotron-fluid">
-    <div class="container-xl">
-      <div class="row">
-        <div class="col-md-10 col-lg-8 mx-auto">
-          <h1 class="display-4 display-3">RSS Reader</h1>
-          <form id="rssForm">
-            <div class="form-row">
-              <div class="col">
-                <input type="text" name="url" class="form-control" id="rssLinkInput" aria-describedby="rssLink" placeholder="RSS Link">
-                <small id="linkHelp" class="form-text text-muted">Example: https://ru.hexlet.io/lessons.rss.</small>
-                <div id="errorMessage" class="feedback text-danger"></div>
+<body class="d-flex flex-column min-vh-100">
+  <main class="flex-grow-1">
+    <div class="jumbotron jumbotron-fluid">
+      <div class="container-xl">
+        <div class="row">
+          <div class="col-md-10 col-lg-8 mx-auto">
+            <h1 class="display-4 display-3">RSS Reader</h1>
+            <form id="rssForm">
+              <div class="form-row">
+                <div class="col">
+                  <input type="text" name="url" class="form-control" id="rssLinkInput" aria-describedby="rssLink" placeholder="RSS Link">
+                  <small id="linkHelp" class="form-text text-muted">Example: https://ru.hexlet.io/lessons.rss.</small>
+                  <div id="errorMessage" class="feedback text-danger"></div>
+                </div>
+                <div class="col-auto">
+                  <button type="submit" class="btn btn-primary">Add link</button>
+                </div>
               </div>
-              <div class="col-auto">
-                <button type="submit" class="btn btn-primary">Add link</button>
-              </div>
-            </div>
-          </form>
+            </form>
+          </div>
         </div>
       </div>
     </div>
-  </div>
+  </main>
   <div class="container-xl">
     <div class="row">
       <div id="feedsBox" class="col-md-10 col-lg-8 mx-auto feeds"></div>
     </div>
   </div>
+  <footer class="footer border-top py-3 mt-5">
+    <div class="container-xl">
+      <div class="text-center">
+        <a href="https://github.com/KruglovDV">
+          <img width="60" alt="GitHub Octocat" src="https://github.githubassets.com/images/modules/logos_page/Octocat.png">
+        </a>
+      </div>
+    </div>
+  </footer>
 </body>
 </html>
