@@ -2,14 +2,14 @@ import compose from 'lodash/fp/compose';
 import forEach from 'lodash/forEach';
 import groupBy from 'lodash/groupBy';
 import differenceBy from 'lodash/differenceBy';
-import FORM_STATES from './constants';
 
-const invalidFieldClassName = 'is-invalid';
+import FORM_STATES from './constants';
 
 const getFeedId = (id) => `feedId-${id}`;
 
 const renderForm = (state) => {
   const { state: formState, errorMessage } = state.form;
+  const invalidFieldClassName = 'is-invalid';
   const errorMessageNode = document.getElementById('errorMessage');
   const input = document.getElementById('rssLinkInput');
   const submitButton = document.querySelector('button[type=submit]');

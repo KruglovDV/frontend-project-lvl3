@@ -6,6 +6,7 @@ import get from 'lodash/get';
 import map from 'lodash/map';
 import includes from 'lodash/includes';
 import getFp from 'lodash/fp/get';
+import i18next from 'i18next';
 
 import watch from './watchers';
 import FORM_STATES from './constants';
@@ -13,11 +14,9 @@ import parseFeed from './parser';
 
 const proxyUrl = 'https://cors-anywhere.herokuapp.com/';
 
-const isValidUrl = yup.string().url();
-
 const isUniqUrl = (urls, url) => () => {
   if (includes(urls, url)) {
-    throw new Error('url is already exists');
+    throw new Error(i18next.t('validationErros.urlExists'));
   }
   return url;
 };
@@ -28,7 +27,8 @@ const handleValidationError = (state) => (e) => {
 
 const validate = (url, addedUrls) => (
   new Promise((resolve, reject) => (
-    isValidUrl.validate(url)
+    yup.string().url(i18next.t('validationErros.invalidUrl'))
+      .validate(url)
       .then(isUniqUrl(addedUrls, url))
       .then(resolve)
       .catch(reject)
