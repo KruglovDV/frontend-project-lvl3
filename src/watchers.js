@@ -10,8 +10,9 @@ const getFeedId = (id) => `feedId-${id}`;
 
 const renderForm = (state) => {
   const { state: formState, errorMessage } = state.form;
-  const errorMessageNode = document.getElementById('errorMessage'); // eslint-disable-line
-  const input = document.getElementById('rssLinkInput'); // eslint-disable-line
+  const errorMessageNode = document.getElementById('errorMessage');
+  const input = document.getElementById('rssLinkInput');
+  const submitButton = document.querySelector('button[type=submit]');
 
   if (formState === FORM_STATES.ERROR) {
     errorMessageNode.textContent = errorMessage;
@@ -21,6 +22,15 @@ const renderForm = (state) => {
     errorMessageNode.textContent = '';
     input.classList.remove(invalidFieldClassName);
     input.value = '';
+    submitButton.removeAttribute('disabled');
+    const spinner = submitButton.querySelector('span');
+    submitButton.removeChild(spinner);
+  }
+  if (formState === FORM_STATES.REQUEST) {
+    submitButton.setAttribute('disabled', true);
+    const spinner = document.createElement('span');
+    spinner.className = 'spinner-border spinner-border-sm';
+    submitButton.appendChild(spinner);
   }
 };
 

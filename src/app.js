@@ -46,13 +46,13 @@ const setNewFeed = (state, url) => ({ feed, posts: newPosts }) => {
 const app = () => {
   const state = {
     form: { state: FORM_STATES.FILLING },
-    feeds: [], // { id, url, title, description, link }
-    posts: [], // { id, title, description, link, feedId }
+    feeds: [],
+    posts: [],
   };
 
   const watchedState = onChange(state, watch);
 
-  const form = document.getElementById('rssForm'); // eslint-disable-line no-undef
+  const form = document.getElementById('rssForm');
 
   const formSubmitHandler = (event) => {
     event.preventDefault();
@@ -61,10 +61,13 @@ const app = () => {
 
     validate(url, addedUrls)
       .then(() => {
-        set(watchedState, 'form', { state: FORM_STATES.PROCESSED });
+        set(watchedState, 'form', { state: FORM_STATES.REQUEST });
         return requestFeed(url);
       })
-      .then(parseFeed)
+      .then((fetchedFeed) => {
+        set(watchedState, 'form', { state: FORM_STATES.PROCESSED });
+        return parseFeed(fetchedFeed);
+      })
       .then(setNewFeed(watchedState, url))
       .catch(handleValidationError(watchedState));
   };
