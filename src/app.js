@@ -4,16 +4,20 @@ import axios from 'axios';
 import set from 'lodash/set';
 import get from 'lodash/get';
 import map from 'lodash/map';
+import flatMap from 'lodash/flatMap';
 import includes from 'lodash/includes';
 import getFp from 'lodash/fp/get';
 import uniqueId from 'lodash/uniqueId';
+import reject from 'lodash/reject';
+import zip from 'lodash/zip';
+import differenceBy from 'lodash/differenceBy';
 import i18next from 'i18next';
 
 import watch from './watchers';
 import FORM_STATES from './constants';
 import parseFeed from './parser';
 
-const timeout = 5;
+const timeout = 5000;
 
 const proxyUrl = 'https://cors-anywhere.herokuapp.com/';
 
@@ -52,12 +56,27 @@ const setNewFeed = (state, url) => ({ feed, posts: newPosts }) => {
 
 const startUpdateFeedsByTimeout = (state) => {
   setTimeout(async () => {
-    const feedUrls = map(state.feeds, 'url');
-    Promise.allSettled(map(feedUrls, requestFeed))
-      .then((requestedFeeds) => {
-        const parsedFeeds = map(requestedFeeds, parseFeed);
-      });
+    const { feeds, posts } = state;
+    const feedUrls = map(feeds, 'url');
     
+    Promise.allSettled(map(feedUrls, requestFeed))
+      .then((responses) => {
+        const feedsResponses = zip(feeds, responses);
+        const successedResponses = reject(
+          feedsResponses, ([, { status }]) => status === 'rejected',
+        );
+        
+        const newPosts = flatMap(successedResponses, ([feed, response]) => {
+          const { id: feedId } = feed;
+          const { posts: newPosts } = parseFeed(response.value);
+          const addedPosts = differenceBy(newPosts, posts, 'title');
+          return map(addedPosts, (post) => ({ ...post, id: uniqueId(), feedId })); 
+        });
+        
+        set(state, 'posts', [...posts, ...newPosts]);
+        startUpdateFeedsByTimeout(state);
+      })
+      .catch(() => startUpdateFeedsByTimeout(state));
   }, timeout);
 };
 
@@ -69,6 +88,7 @@ const app = () => {
   };
 
   const watchedState = onChange(state, watch);
+  startUpdateFeedsByTimeout(watchedState);
 
   const form = document.getElementById('rssForm');
 

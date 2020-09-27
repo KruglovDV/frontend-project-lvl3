@@ -81,12 +81,12 @@ const createPostNode = (post) => {
 const renderPosts = (state, newPosts, prevPosts) => {
   const addedPosts = differenceBy(newPosts, prevPosts, 'id');
   const groupedPostsByFeedId = groupBy(addedPosts, 'feedId');
+  
 
   const renderFeedPosts = (feedPosts, feedId) => {
     const postsBoxNode = document.querySelector(`div[id=${getFeedId(feedId)}] > div`);
-    postsBoxNode.innerHTML = '';
     const renderPost = compose(
-      (post) => postsBoxNode.appendChild(post),
+      (post) => postsBoxNode.prepend(post),
       createPostNode,
     );
 
