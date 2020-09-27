@@ -19,7 +19,7 @@ const renderForm = (state) => {
     input.classList.add(invalidFieldClassName);
     submitButton.removeAttribute('disabled');
     const spinner = submitButton.querySelector('span');
-    spinner && submitButton.removeChild(spinner);
+    if (spinner) submitButton.removeChild(spinner);
   }
   if (formState === FORM_STATES.PROCESSED) {
     errorMessageNode.textContent = '';
@@ -81,7 +81,6 @@ const createPostNode = (post) => {
 const renderPosts = (state, newPosts, prevPosts) => {
   const addedPosts = differenceBy(newPosts, prevPosts, 'id');
   const groupedPostsByFeedId = groupBy(addedPosts, 'feedId');
-  
 
   const renderFeedPosts = (feedPosts, feedId) => {
     const postsBoxNode = document.querySelector(`div[id=${getFeedId(feedId)}] > div`);

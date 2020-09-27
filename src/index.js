@@ -11,7 +11,6 @@ i18next.init({
   resources: {
     en: {
       translation: en,
-    }
-  }
+    },
+  },
 }).then(app);
-

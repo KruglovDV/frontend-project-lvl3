@@ -8,7 +8,7 @@ import flatMap from 'lodash/flatMap';
 import includes from 'lodash/includes';
 import getFp from 'lodash/fp/get';
 import uniqueId from 'lodash/uniqueId';
-import reject from 'lodash/reject';
+import filter from 'lodash/filter';
 import zip from 'lodash/zip';
 import differenceBy from 'lodash/differenceBy';
 import i18next from 'i18next';
@@ -17,16 +17,20 @@ import watch from './watchers';
 import FORM_STATES from './constants';
 import parseFeed from './parser';
 
-const timeout = 5000;
+const TIMEOUT = 5000;
 
-const proxyUrl = 'https://cors-anywhere.herokuapp.com/';
+const PROXY_URL = 'https://cors-anywhere.herokuapp.com/';
 
 const isUniqUrl = (urls, url) => () => {
   if (includes(urls, url)) {
-    throw new Error(i18next.t('validationErros.urlExists'));
+    throw new Error(i18next.t('validationErrors.urlExists'));
   }
   return url;
 };
+
+const addIds = (posts, feedId) => (
+  map(posts, (post) => ({ ...post, id: uniqueId(), feedId }))
+);
 
 const handleValidationError = (state) => (e) => {
   set(state, 'form', { state: FORM_STATES.ERROR, errorMessage: e.message });
@@ -34,7 +38,7 @@ const handleValidationError = (state) => (e) => {
 
 const validate = (url, addedUrls) => (
   new Promise((resolve, reject) => (
-    yup.string().url(i18next.t('validationErros.invalidUrl'))
+    yup.string().url(i18next.t('validationErrors.invalidUrl'))
       .validate(url)
       .then(isUniqUrl(addedUrls, url))
       .then(resolve)
@@ -42,14 +46,12 @@ const validate = (url, addedUrls) => (
   ))
 );
 
-const requestFeed = (url) => axios.get(`${proxyUrl}${url}`).then(getFp('data'));
+const requestFeed = (url) => axios.get(`${PROXY_URL}${url}`).then(getFp('data'));
 
 const setNewFeed = (state, url) => ({ feed, posts: newPosts }) => {
   const { feeds, posts } = state;
   const feedId = uniqueId();
-  const newPostsWithFeedId = map(
-    newPosts, (post) => ({ ...post, id: uniqueId(), feedId })
-  );
+  const newPostsWithFeedId = addIds(newPosts, feedId);
   set(state, 'feeds', [...feeds, { ...feed, id: feedId, url }]);
   set(state, 'posts', [...posts, ...newPostsWithFeedId]);
 };
@@ -58,26 +60,26 @@ const startUpdateFeedsByTimeout = (state) => {
   setTimeout(async () => {
     const { feeds, posts } = state;
     const feedUrls = map(feeds, 'url');
-    
+
     Promise.allSettled(map(feedUrls, requestFeed))
       .then((responses) => {
         const feedsResponses = zip(feeds, responses);
-        const successedResponses = reject(
-          feedsResponses, ([, { status }]) => status === 'rejected',
+        const succeededResponses = filter(
+          feedsResponses, ([, { status }]) => status !== 'rejected',
         );
-        
-        const newPosts = flatMap(successedResponses, ([feed, response]) => {
+
+        const newPosts = flatMap(succeededResponses, ([feed, response]) => {
           const { id: feedId } = feed;
-          const { posts: newPosts } = parseFeed(response.value);
-          const addedPosts = differenceBy(newPosts, posts, 'title');
-          return map(addedPosts, (post) => ({ ...post, id: uniqueId(), feedId })); 
+          const { posts: newParsedPosts } = parseFeed(response.value);
+          const addedPosts = differenceBy(newParsedPosts, posts, 'title');
+          return addIds(addedPosts, feedId);
         });
-        
+
         set(state, 'posts', [...posts, ...newPosts]);
         startUpdateFeedsByTimeout(state);
       })
       .catch(() => startUpdateFeedsByTimeout(state));
-  }, timeout);
+  }, TIMEOUT);
 };
 
 const app = () => {
