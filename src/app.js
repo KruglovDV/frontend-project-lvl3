@@ -6,11 +6,14 @@ import get from 'lodash/get';
 import map from 'lodash/map';
 import includes from 'lodash/includes';
 import getFp from 'lodash/fp/get';
+import uniqueId from 'lodash/uniqueId';
 import i18next from 'i18next';
 
 import watch from './watchers';
 import FORM_STATES from './constants';
 import parseFeed from './parser';
+
+const timeout = 5;
 
 const proxyUrl = 'https://cors-anywhere.herokuapp.com/';
 
@@ -39,8 +42,23 @@ const requestFeed = (url) => axios.get(`${proxyUrl}${url}`).then(getFp('data'));
 
 const setNewFeed = (state, url) => ({ feed, posts: newPosts }) => {
   const { feeds, posts } = state;
-  set(state, 'feeds', [...feeds, { ...feed, url }]);
-  set(state, 'posts', [...posts, ...newPosts]);
+  const feedId = uniqueId();
+  const newPostsWithFeedId = map(
+    newPosts, (post) => ({ ...post, id: uniqueId(), feedId })
+  );
+  set(state, 'feeds', [...feeds, { ...feed, id: feedId, url }]);
+  set(state, 'posts', [...posts, ...newPostsWithFeedId]);
+};
+
+const startUpdateFeedsByTimeout = (state) => {
+  setTimeout(async () => {
+    const feedUrls = map(state.feeds, 'url');
+    Promise.allSettled(map(feedUrls, requestFeed))
+      .then((requestedFeeds) => {
+        const parsedFeeds = map(requestedFeeds, parseFeed);
+      });
+    
+  }, timeout);
 };
 
 const app = () => {

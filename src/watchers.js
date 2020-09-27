@@ -17,6 +17,9 @@ const renderForm = (state) => {
   if (formState === FORM_STATES.ERROR) {
     errorMessageNode.textContent = errorMessage;
     input.classList.add(invalidFieldClassName);
+    submitButton.removeAttribute('disabled');
+    const spinner = submitButton.querySelector('span');
+    spinner && submitButton.removeChild(spinner);
   }
   if (formState === FORM_STATES.PROCESSED) {
     errorMessageNode.textContent = '';
