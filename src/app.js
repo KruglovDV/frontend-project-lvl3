@@ -25,7 +25,12 @@ const isUniqUrl = (urls, url) => () => {
   if (includes(urls, url)) {
     throw new Error(i18next.t('validationErrors.urlExists'));
   }
-  return url;
+};
+
+const validate = (feedUrl, addedFeedsUrls) => {
+  yup.string().url(i18next.t('validationErrors.invalidUrl'))
+    .validateSync(feedUrl);
+  isUniqUrl(addedFeedsUrls, feedUrl);
 };
 
 const addIds = (posts, feedId) => (
@@ -36,23 +41,13 @@ const handleValidationError = (state) => (e) => {
   set(state, 'form', { state: FORM_STATES.ERROR, errorMessage: e.message });
 };
 
-const validate = (url, addedUrls) => (
-  new Promise((resolve, reject) => (
-    yup.string().url(i18next.t('validationErrors.invalidUrl'))
-      .validate(url)
-      .then(isUniqUrl(addedUrls, url))
-      .then(resolve)
-      .catch(reject)
-  ))
-);
-
 const requestFeed = (url) => axios.get(`${PROXY_URL}${url}`).then(getFp('data'));
 
-const setNewFeed = (state, url) => ({ feed, posts: newPosts }) => {
-  const { feeds, posts } = state;
+const setNewFeed = (state, url) => ({ feed: newFeed, posts: newPosts }) => {
+  const { feeds: addedFeeds, posts } = state;
   const feedId = uniqueId();
   const newPostsWithFeedId = addIds(newPosts, feedId);
-  set(state, 'feeds', [...feeds, { ...feed, id: feedId, url }]);
+  set(state, 'feeds', [...addedFeeds, { ...newFeed, id: feedId, url }]);
   set(state, 'posts', [...posts, ...newPostsWithFeedId]);
 };
 
@@ -63,12 +58,12 @@ const startUpdateFeedsByTimeout = (state) => {
 
     Promise.allSettled(map(feedUrls, requestFeed))
       .then((responses) => {
-        const feedsResponses = zip(feeds, responses);
-        const succeededResponses = filter(
-          feedsResponses, ([, { status }]) => status !== 'rejected',
+        const feedResponsePairs = zip(feeds, responses);
+        const succeededFeedResponsePairs = filter(
+          feedResponsePairs, ([, { status }]) => status !== 'rejected',
         );
 
-        const newPosts = flatMap(succeededResponses, ([feed, response]) => {
+        const newPosts = flatMap(succeededFeedResponsePairs, ([feed, response]) => {
           const { id: feedId } = feed;
           const { posts: newParsedPosts } = parseFeed(response.value);
           const addedPosts = differenceBy(newParsedPosts, posts, 'title');
@@ -96,20 +91,21 @@ const app = () => {
 
   const formSubmitHandler = (event) => {
     event.preventDefault();
-    const url = get(event, 'target.url.value');
-    const addedUrls = map(state.feeds, 'url');
+    const feedUrl = get(event, 'target.url.value');
+    const addedFeedsUrls = map(state.feeds, 'url');
 
-    validate(url, addedUrls)
-      .then(() => {
-        set(watchedState, 'form', { state: FORM_STATES.REQUEST });
-        return requestFeed(url);
-      })
-      .then((fetchedFeed) => {
-        set(watchedState, 'form', { state: FORM_STATES.PROCESSED });
-        return parseFeed(fetchedFeed);
-      })
-      .then(setNewFeed(watchedState, url))
-      .catch(handleValidationError(watchedState));
+    try {
+      validate(feedUrl, addedFeedsUrls);
+      set(watchedState, 'form', { state: FORM_STATES.REQUEST });
+      requestFeed(feedUrl)
+        .then((requestedFeed) => {
+          set(watchedState, 'form', { state: FORM_STATES.PROCESSED });
+          return parseFeed(requestedFeed);
+        })
+        .then(setNewFeed(watchedState, feedUrl));
+    } catch (e) {
+      handleValidationError(e);
+    }
   };
 
   form.addEventListener('submit', formSubmitHandler);
