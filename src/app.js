@@ -100,7 +100,6 @@ const app = () => {
       requestFeed(feedUrl)
         .then((requestedFeed) => {
           set(watchedState, 'form', { state: FORM_STATES.PROCESSED });
-          console.log(JSON.stringify(parseFeed(requestedFeed)));
           return parseFeed(requestedFeed);
         })
         .then(setNewFeed(watchedState, feedUrl));
