@@ -1,0 +1,59 @@
+{
+  "feed":{
+     "title":"Новые уроки на Хекслете",
+     "description":"Практические уроки по программированию",
+     "link":"https://ru.hexlet.io/"
+  },
+  "posts":[
+     {
+        "title":"Открытые проекты (Open Source) / Введение в Git",
+        "description":"Цель: Влиться в разработку открытых проектов и прокачать свое портфолио",
+        "link":"https://ru.hexlet.io/courses/intro_to_git/lessons/open-source/theory_unit"
+     },
+     {
+        "title":"Понимание Git / Введение в Git",
+        "description":"Цель: Познакомиться с концепцией односвязных списков",
+        "link":"https://ru.hexlet.io/courses/intro_to_git/lessons/thinking/theory_unit"
+     },
+     {
+        "title":"Перемещение по истории / Введение в Git",
+        "description":"Цель: Научиться отправляться в прошлое и обратно",
+        "link":"https://ru.hexlet.io/courses/intro_to_git/lessons/code-travel/theory_unit"
+     },
+     {
+        "title":"Индекс / Введение в Git",
+        "description":"Цель: Изучить разные способы добавления изменений в индекс включая интерактивную работу с патчами",
+        "link":"https://ru.hexlet.io/courses/intro_to_git/lessons/index/theory_unit"
+     },
+     {
+        "title":"Игнорирование файлов (Gitignore) / Введение в Git",
+        "description":"Цель: Познакомиться с игнорированем файлов и научиться правильно определять что добавлять в репоизторий, а что нет",
+        "link":"https://ru.hexlet.io/courses/intro_to_git/lessons/gitignore/theory_unit"
+     },
+     {
+        "title":"Stash / Введение в Git",
+        "description":"Цель: Научиться прятать и восстанавливать изменения рабочей директории",
+        "link":"https://ru.hexlet.io/courses/intro_to_git/lessons/git-stash/theory_unit"
+     },
+     {
+        "title":"Утилиты / Bootstrap: Основы",
+        "description":"Цель: Узнать об утилитах. Научиться создавать пользовательские утилиты с использованием стандартных средств Bootstrap 4",
+        "link":"https://ru.hexlet.io/courses/bootstrap_basic/lessons/utilities/theory_unit"
+     },
+     {
+        "title":"Анализ истории изменений (коммитов) / Введение в Git",
+        "description":"Цель: Научиться получать разнообразную информацию о прошлых коммитах: кто когда и как менял код (log, show, blame, grep)",
+        "link":"https://ru.hexlet.io/courses/intro_to_git/lessons/inspect/theory_unit"
+     },
+     {
+        "title":"Анализ сделанных изменений / Введение в Git",
+        "description":"Цель: Научиться анализировать сделанные изменения перед коммитом (diff)",
+        "link":"https://ru.hexlet.io/courses/intro_to_git/lessons/changes/theory_unit"
+     },
+     {
+        "title":"Отмена коммитов / Введение в Git",
+        "description":"Цель: Научиться удалять коммиты и заменять их новыми",
+        "link":"https://ru.hexlet.io/courses/intro_to_git/lessons/commits-cancelation/theory_unit"
+     }
+  ]
+}

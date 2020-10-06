@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rss version="2.0">
+  <channel>
+    <title>Новые уроки на Хекслете</title>
+    <description>Практические уроки по программированию</description>
+    <link>https://ru.hexlet.io/</link>
+    <webMaster>info@hexlet.io</webMaster>
+    <item>
+      <title>Открытые проекты (Open Source) / Введение в Git</title>
+      <guid isPermaLink="false">1845</guid>
+      <link>https://ru.hexlet.io/courses/intro_to_git/lessons/open-source/theory_unit</link>
+      <description>Цель: Влиться в разработку открытых проектов и прокачать свое портфолио</description>
+      <pubDate>Thu, 01 Oct 2020 02:57:52 +0000</pubDate>
+    </item>
+    <item>
+      <title>Понимание Git / Введение в Git</title>
+      <guid isPermaLink="false">1834</guid>
+      <link>https://ru.hexlet.io/courses/intro_to_git/lessons/thinking/theory_unit</link>
+      <description>Цель: Познакомиться с концепцией односвязных списков</description>
+      <pubDate>Thu, 01 Oct 2020 02:57:48 +0000</pubDate>
+    </item>
+    <item>
+      <title>Перемещение по истории / Введение в Git</title>
+      <guid isPermaLink="false">1837</guid>
+      <link>https://ru.hexlet.io/courses/intro_to_git/lessons/code-travel/theory_unit</link>
+      <description>Цель: Научиться отправляться в прошлое и обратно</description>
+      <pubDate>Thu, 01 Oct 2020 02:57:44 +0000</pubDate>
+    </item>
+    <item>
+      <title>Индекс / Введение в Git</title>
+      <guid isPermaLink="false">1844</guid>
+      <link>https://ru.hexlet.io/courses/intro_to_git/lessons/index/theory_unit</link>
+      <description>Цель: Изучить разные способы добавления изменений в индекс включая интерактивную работу с патчами</description>
+      <pubDate>Tue, 29 Sep 2020 22:01:55 +0000</pubDate>
+    </item>
+    <item>
+      <title>Игнорирование файлов (Gitignore) / Введение в Git</title>
+      <guid isPermaLink="false">1841</guid>
+      <link>https://ru.hexlet.io/courses/intro_to_git/lessons/gitignore/theory_unit</link>
+      <description>Цель: Познакомиться с игнорированем файлов и научиться правильно определять что добавлять в репоизторий, а что нет</description>
+      <pubDate>Tue, 29 Sep 2020 02:12:24 +0000</pubDate>
+    </item>
+    <item>
+      <title>Stash / Введение в Git</title>
+      <guid isPermaLink="false">1836</guid>
+      <link>https://ru.hexlet.io/courses/intro_to_git/lessons/git-stash/theory_unit</link>
+      <description>Цель: Научиться прятать и восстанавливать изменения рабочей директории</description>
+      <pubDate>Tue, 29 Sep 2020 02:12:21 +0000</pubDate>
+    </item>
+    <item>
+      <title>Утилиты / Bootstrap: Основы</title>
+      <guid isPermaLink="false">1843</guid>
+      <link>https://ru.hexlet.io/courses/bootstrap_basic/lessons/utilities/theory_unit</link>
+      <description>Цель: Узнать об утилитах. Научиться создавать пользовательские утилиты с использованием стандартных средств Bootstrap 4</description>
+      <pubDate>Sun, 27 Sep 2020 16:43:02 +0000</pubDate>
+    </item>
+    <item>
+      <title>Анализ истории изменений (коммитов) / Введение в Git</title>
+      <guid isPermaLink="false">1829</guid>
+      <link>https://ru.hexlet.io/courses/intro_to_git/lessons/inspect/theory_unit</link>
+      <description>Цель: Научиться получать разнообразную информацию о прошлых коммитах: кто когда и как менял код (log, show, blame, grep)</description>
+      <pubDate>Sun, 27 Sep 2020 01:23:06 +0000</pubDate>
+    </item>
+    <item>
+      <title>Анализ сделанных изменений / Введение в Git</title>
+      <guid isPermaLink="false">1830</guid>
+      <link>https://ru.hexlet.io/courses/intro_to_git/lessons/changes/theory_unit</link>
+      <description>Цель: Научиться анализировать сделанные изменения перед коммитом (diff)</description>
+      <pubDate>Sun, 27 Sep 2020 01:23:02 +0000</pubDate>
+    </item>
+    <item>
+      <title>Отмена коммитов / Введение в Git</title>
+      <guid isPermaLink="false">1831</guid>
+      <link>https://ru.hexlet.io/courses/intro_to_git/lessons/commits-cancelation/theory_unit</link>
+      <description>Цель: Научиться удалять коммиты и заменять их новыми</description>
+      <pubDate>Sun, 27 Sep 2020 01:22:57 +0000</pubDate>
+    </item>
+  </channel>
+</rss>
