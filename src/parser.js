@@ -1,24 +1,16 @@
-import get from 'lodash/fp/get';
-import compose from 'lodash/fp/compose';
+import get from 'lodash/get';
 import map from 'lodash/map';
-import zipObject from 'lodash/zipObject';
 
 const parseNode = (node) => {
-  const nodeTags = ['title', 'description', 'link'];
+  const titleNode = node.querySelector('title');
+  const descriptionNode = node.querySelector('description');
+  const linkNode = node.querySelector('link');
 
-  const getTagContent = compose(
-    get('textContent'),
-    (attr) => node.querySelector(attr),
-  );
-
-  const tagsContent = map(nodeTags, getTagContent);
-
-  const parsedNode = zipObject(
-    nodeTags,
-    tagsContent,
-  );
-
-  return { ...parsedNode };
+  return {
+    title: get(titleNode, 'textContent', ''),
+    description: get(descriptionNode, 'textContent', ''),
+    link: get(linkNode, 'textContent', ''),
+  };
 };
 
 const parseFeed = (text) => {
