@@ -1,11 +1,9 @@
 import onChange from 'on-change';
 import * as yup from 'yup';
 import axios from 'axios';
-import set from 'lodash/set';
 import get from 'lodash/get';
 import map from 'lodash/map';
 import flatMap from 'lodash/flatMap';
-import includes from 'lodash/includes';
 import getFp from 'lodash/fp/get';
 import uniqueId from 'lodash/uniqueId';
 import filter from 'lodash/filter';
@@ -16,29 +14,24 @@ import i18next from 'i18next';
 import watch from './watchers';
 import FORM_STATES from './constants';
 import parseFeed from './parser';
+import en from './dictionaries/en';
 
 const TIMEOUT = 5000;
 
 const PROXY_URL = 'https://cors-anywhere.herokuapp.com/';
 
-const isUniqUrl = (urls, url) => () => {
-  if (includes(urls, url)) {
-    throw new Error(i18next.t('validationErrors.urlExists'));
-  }
-};
-
 const validate = (feedUrl, addedFeedsUrls) => {
-  yup.string().url(i18next.t('validationErrors.invalidUrl'))
-    .validateSync(feedUrl);
-  isUniqUrl(addedFeedsUrls, feedUrl);
+  yup.string().url().validateSync(feedUrl);
+  yup.mixed().notOneOf(addedFeedsUrls).validateSync(feedUrl);
 };
 
 const addIds = (posts, feedId) => (
   map(posts, (post) => ({ ...post, id: uniqueId(), feedId }))
 );
 
-const handleValidationError = (state) => (e) => {
-  set(state, 'form', { state: FORM_STATES.ERROR, errorMessage: e.message });
+const handleValidationError = (e, state) => {
+  // eslint-disable-next-line no-param-reassign
+  state.form = { state: FORM_STATES.ERROR, errorMessage: e.message };
 };
 
 const requestFeed = (url) => axios.get(`${PROXY_URL}${url}`).then(getFp('data'));
@@ -47,8 +40,11 @@ const setNewFeed = (state, url) => ({ feed: newFeed, posts: newPosts }) => {
   const { feeds: addedFeeds, posts } = state;
   const feedId = uniqueId();
   const newPostsWithFeedId = addIds(newPosts, feedId);
-  set(state, 'feeds', [...addedFeeds, { ...newFeed, id: feedId, url }]);
-  set(state, 'posts', [...posts, ...newPostsWithFeedId]);
+
+  // eslint-disable-next-line no-param-reassign
+  state.feeds = [...addedFeeds, { ...newFeed, id: feedId, url }];
+  // eslint-disable-next-line no-param-reassign
+  state.posts = [...posts, ...newPostsWithFeedId];
 };
 
 const startUpdateFeedsByTimeout = (state) => {
@@ -70,10 +66,10 @@ const startUpdateFeedsByTimeout = (state) => {
           return addIds(addedPosts, feedId);
         });
 
-        set(state, 'posts', [...posts, ...newPosts]);
-        startUpdateFeedsByTimeout(state);
+        // eslint-disable-next-line no-param-reassign
+        state.posts = [...posts, ...newPosts];
       })
-      .catch(() => startUpdateFeedsByTimeout(state));
+      .finally(() => startUpdateFeedsByTimeout(state));
   }, TIMEOUT);
 };
 
@@ -85,7 +81,6 @@ const app = () => {
   };
 
   const watchedState = onChange(state, watch);
-  startUpdateFeedsByTimeout(watchedState);
 
   const form = document.getElementById('rssForm');
 
@@ -96,19 +91,35 @@ const app = () => {
 
     try {
       validate(feedUrl, addedFeedsUrls);
-      set(watchedState, 'form', { state: FORM_STATES.REQUEST });
+      watchedState.form = { state: FORM_STATES.REQUEST };
       requestFeed(feedUrl)
         .then((requestedFeed) => {
-          set(watchedState, 'form', { state: FORM_STATES.PROCESSED });
+          watchedState.form = { state: FORM_STATES.PROCESSED };
           return parseFeed(requestedFeed);
         })
-        .then(setNewFeed(watchedState, feedUrl));
+        .then(setNewFeed(watchedState, feedUrl))
+        .catch((e) => handleValidationError(e, watchedState));
     } catch (e) {
-      handleValidationError(e);
+      handleValidationError(e, watchedState);
     }
   };
 
   form.addEventListener('submit', formSubmitHandler);
+
+  return i18next.init({
+    lng: 'en',
+    resources: {
+      en: {
+        translation: en,
+      },
+    },
+  }).then(() => {
+    yup.setLocale({
+      string: { url: i18next.t('validationErrors.invalidUrl') },
+      mixed: { notOneOf: i18next.t('validationErrors.urlExists') },
+    });
+    startUpdateFeedsByTimeout(watchedState);
+  });
 };
 
 export default app;
